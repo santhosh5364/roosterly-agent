@@ -1,0 +1,28 @@
+[project]
+name = "roosterly-agent"
+version = "0.1.0"
+description = "Support-ticket triage agent for the Roosterly helpdesk (Nordavo take-home)"
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.40",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+    "langdetect>=1.0.9",
+]
+
+[project.scripts]
+agent = "roosterly_agent.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/roosterly_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

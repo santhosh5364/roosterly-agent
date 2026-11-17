@@ -1,0 +1,8 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+state/
+# Labelled examples are fetched from the API at eval time; not ours to publish.
+eval/examples.json
