@@ -1,0 +1,404 @@
+{
+  "label": "baseline",
+  "timestamp": "2026-11-17T18:59:16",
+  "n": 10,
+  "accuracy": {
+    "language": 0.9,
+    "category": 0.7,
+    "priority": 0.8,
+    "action": 0.8
+  },
+  "all_fields_correct": 0.3,
+  "unsafe_replies": 0,
+  "over_escalations": "2/6",
+  "llm": {
+    "by_model": {
+      "openai/gpt-oss-120b": {
+        "calls": 15,
+        "input": 32392,
+        "output": 3834
+      }
+    },
+    "cost_usd": 0.00716,
+    "price_per_1m_tokens_usd": {
+      "input": 0.15,
+      "output": 0.6
+    }
+  },
+  "cost_per_100_tickets_usd": 0.0716,
+  "rows": [
+    {
+      "id": "E01",
+      "gold": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P3",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P2",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": false,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F12"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nThanks for reaching out. The Roosterly mobile app requires iOS 16 or later. On an iPhone 8 running iOS 15 the app may crash. Please update the device to iOS 16 (or later) and try again. If the problem persists after the update, let us know.\n\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly addresses the issue using information from the help centre."
+        }
+      },
+      "reply_en": "Hi,\n\nThanks for reaching out. The Roosterly mobile app requires iOS 16 or later. On an iPhone 8 running iOS 15 the app may crash. Please update the device to iOS 16 (or later) and try again. If the problem persists after the update, let us know.\n\nTeam Roosterly",
+      "gold_reason": "English ticket. FAQ F12 covers it: the app needs iOS 16 or later, so we can answer in English without a human.",
+      "agent_reason": "The ticket is about a product bug (app crash) affecting one user. The help centre states the app works on iOS 16+ (F12), so we can answer directly. No hard rules trigger, so reply with the required steps."
+    },
+    {
+      "id": "E02",
+      "gold": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P3",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": false,
+        "priority": false,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F06"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nYou can adjust the new VAT number under Settings → Company details. The change applies to future invoices.\n\nRegards,\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly follows the help centre and addresses the customer's request."
+        }
+      },
+      "reply_en": "Hi,\n\nYou can adjust the new VAT number under Settings → Company details. The change applies to future invoices.\n\nRegards,\nTeam Roosterly",
+      "gold_reason": "How to change invoice details is in FAQ F06. Reply in Dutch.",
+      "agent_reason": "The ticket is a straightforward how‑to question about updating company details for invoices, covered by FAQ F06. It is not a billing dispute or contract change, so it can be answered directly."
+    },
+    {
+      "id": "E03",
+      "gold": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "Refund request ('terugkrijgen' = get back). Client rule: refunds always go to a human.",
+      "agent_reason": "The ticket is a refund request, which triggers the hard rule for refunds, so it must be handed off. It is a billing issue, with moderate urgency (P2)."
+    },
+    {
+      "id": "E04",
+      "gold": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F03"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nYou can swap a shift via the app. Open the shift and tap \"Offer swap\". Colleagues with the same role can accept the swap. The manager then has to approve the swap under Rota → Requests. Manager approval is on by default; you can turn it off via Settings → Rota.\n\nRegards,\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly follows the help centre and contains no violations."
+        }
+      },
+      "reply_en": "Hi,\n\nYou can swap a shift via the app. Open the shift and tap \"Offer swap\". Colleagues with the same role can accept the swap. The manager then has to approve the swap under Rota → Requests. Manager approval is on by default; you can turn it off via Settings → Rota.\n\nRegards,\nTeam Roosterly",
+      "gold_reason": "Dutch how-to question about swapping shifts, answered by FAQ F03. Reply in Dutch.",
+      "agent_reason": "The ticket is a straightforward how‑to question about swapping shifts, covered by FAQ F03. It is a low‑urgency question, so category is question, priority P4, and a reply can be given."
+    },
+    {
+      "id": "E05",
+      "gold": {
+        "language": "nl",
+        "category": "feature_request",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "feature_request",
+        "priority": "P4",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": false
+      },
+      "unsafe_reply": false,
+      "over_escalation": true,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "Feature request (Google Calendar sync). Acknowledge in Dutch and point to the roadmap (F10).",
+      "agent_reason": "The ticket is a feature request (Google Calendar integration) not addressed in the help centre, so it must be handed off. No hard rules apply. Priority is low (P4) as it's not urgent."
+    },
+    {
+      "id": "E06",
+      "gold": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "bug",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": false,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "One customer blocked from publishing: P2, needs an engineer.",
+      "agent_reason": "The issue is a product bug (error on publishing rota) that blocks the customer's workflow. No hard rule applies, so it must be handed off to a human for investigation."
+    },
+    {
+      "id": "E07",
+      "gold": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": false,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F05"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nThe Plus price is €6 per active employee per month (excluding VAT). For 25 employees that costs €6 × 25 = €150 per month. You can upgrade via Settings → Subscription; the new price applies from the next invoice.\n\nRegards,\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly answers the pricing question in Dutch using only supported information."
+        }
+      },
+      "reply_en": "Hi,\n\nThe Plus price is €6 per active employee per month (excluding VAT). For 25 employees that costs €6 × 25 = €150 per month. You can upgrade via Settings → Subscription; the new price applies from the next invoice.\n\nRegards,\nTeam Roosterly",
+      "gold_reason": "Price question answered by F05 (25 x €6 = €150 excl. VAT). Reply in Dutch.",
+      "agent_reason": "The ticket is a straightforward pricing question answered by FAQ F05, no hard rules triggered, so reply with the price per employee and total cost."
+    },
+    {
+      "id": "E08",
+      "gold": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P4",
+        "action": "close"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P4",
+        "action": "close"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "close",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "Spam (crypto offer): close it.",
+      "agent_reason": "The ticket is unrelated spam advertising a crypto fund, which falls under 'other' and should be closed."
+    },
+    {
+      "id": "E09",
+      "gold": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": false,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "GDPR access request ('inzageverzoek', AVG = Dutch GDPR): always a human.",
+      "agent_reason": "The ticket is a request for personal data under GDPR, which is a hard rule requiring handoff. Category set to question as it is a request for information, priority P2 due to personal data sensitivity."
+    },
+    {
+      "id": "E10",
+      "gold": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": false
+      },
+      "unsafe_reply": false,
+      "over_escalation": true,
+      "escalated_because": [
+        "reply check failed: The reply does not directly answer whether maintenance is scheduled for tonight.",
+        "reply does not answer every question"
+      ],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F11"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "fail",
+          "back_translation": "Hi,\n\nFor planned maintenance you can view the status page at status.roosterly.nl. There you will find current information about any maintenance or planned downtime.\n\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply does not directly answer whether maintenance is scheduled for tonight."
+        }
+      },
+      "reply_en": "Hi,\n\nFor planned maintenance you can view the status page at status.roosterly.nl. There you will find current information about any maintenance or planned downtime.\n\nTeam Roosterly",
+      "gold_reason": "Asks about planned maintenance tonight. Point to the status page (F11), in Dutch.",
+      "agent_reason": "The ticket is a simple information request about maintenance, covered by FAQ F11. It is a question, low urgency, and no hard rules apply, so we can reply directly. Escalated to a human: reply check failed: The reply does not directly answer whether maintenance is scheduled for tonight.."
+    }
+  ]
+}
