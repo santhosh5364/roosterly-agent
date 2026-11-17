@@ -6,3 +6,6 @@ __pycache__/
 state/
 # Labelled examples are fetched from the API at eval time; not ours to publish.
 eval/examples.json
+
+# Exported Claude Code conversations (may contain secrets)
+2026-*-*.txt
