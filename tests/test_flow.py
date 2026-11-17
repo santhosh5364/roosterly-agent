@@ -9,6 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import httpx
+import openai
 import pytest
 
 from roosterly_agent.agent import TriageAgent
@@ -162,3 +163,30 @@ def test_run_id_survives_redaction(tmp_path):
     summary = run(hd, agent, llm, log_dir=tmp_path / "logs", state_dir=tmp_path / "state", limit=1)
     line = json.loads(Path(summary["log"]).read_text(encoding="utf-8").splitlines()[0])
     assert line["run"] == summary["run"]
+
+
+class QuotaExhaustedClient(FakeLLMClient):
+    """Provider dies after the first ticket (e.g. daily quota)."""
+
+    def __init__(self):
+        super().__init__()
+        self.n = 0
+
+    def _create(self, **kw):
+        self.n += 1
+        if self.n > 2:  # ticket 1 = triage + judge
+            raise openai.APIConnectionError(request=httpx.Request("POST", "https://llm.test"))
+        return super()._create(**kw)
+
+
+def test_model_outage_stops_run_and_leaves_tickets_open(tmp_path):
+    fake = FakeHelpdesk(fail_rate=0)
+    client = QuotaExhaustedClient()
+    client.chat = SimpleNamespace(completions=SimpleNamespace(create=client._create))
+    hd, agent, llm = make(fake, client, tmp_path)
+    summary = run(hd, agent, llm, log_dir=tmp_path / "logs", state_dir=tmp_path / "state", reset=True)
+    assert summary["counts"].get("stopped_model_unavailable", 0) >= 1
+    assert summary["still_open"] >= 1
+    # Nothing content-free was posted: every posted decision came from a real triage.
+    for decisions in fake.decisions.values():
+        assert "Automatic triage failed" not in decisions[0][1]["reason"]

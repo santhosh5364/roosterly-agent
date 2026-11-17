@@ -18,6 +18,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import openai
+
 from .agent import Decision, TriageAgent, fallback_handoff
 from .helpdesk import (AlreadyHandled, HelpdeskClient, HelpdeskError, RetriesExhausted,
                        ValidationFailed, is_handled)
@@ -25,6 +27,10 @@ from .llm import LLM
 from .redact import redact
 
 log = logging.getLogger(__name__)
+
+# Provider-level failures (not about this ticket's content): stop the run instead of guessing.
+LLM_UNAVAILABLE = (openai.RateLimitError, openai.APIConnectionError, openai.AuthenticationError,
+                   openai.InternalServerError)
 
 
 def _now() -> str:
@@ -89,7 +95,15 @@ def run(hd: HelpdeskClient, agent: TriageAgent, llm: LLM, *, log_dir: Path, stat
 
         try:
             decision = agent.decide(ticket)
-        except Exception as exc:  # noqa: BLE001 - any model failure (LLMError, API, network) -> human
+        except LLM_UNAVAILABLE as exc:
+            # The model provider is down or out of quota (after the SDK's own retries).
+            # Stop and leave the remaining tickets OPEN: a rerun later handles them properly,
+            # instead of flooding the team with content-free handoffs.
+            log.error("%s: model unavailable (%s); stopping, %d tickets left open for a rerun",
+                      tid, type(exc).__name__, len(ids) - i + 1)
+            counts["stopped_model_unavailable"] = len(ids) - i + 1
+            break
+        except Exception as exc:  # noqa: BLE001 - this ticket could not be triaged -> human
             log.exception("%s: triage failed", tid)
             decision = fallback_handoff(ticket, f"{type(exc).__name__}")
 

@@ -1,0 +1,409 @@
+{
+  "label": "after-fix2",
+  "timestamp": "2026-11-17T19:06:25",
+  "n": 10,
+  "accuracy": {
+    "language": 1.0,
+    "category": 1.0,
+    "priority": 0.8,
+    "action": 1.0
+  },
+  "all_fields_correct": 0.8,
+  "unsafe_replies": 0,
+  "over_escalations": "0/6",
+  "llm": {
+    "by_model": {
+      "openai/gpt-oss-120b": {
+        "calls": 16,
+        "input": 34054,
+        "output": 4332
+      }
+    },
+    "cost_usd": 0.00771,
+    "price_per_1m_tokens_usd": {
+      "input": 0.15,
+      "output": 0.6
+    }
+  },
+  "cost_per_100_tickets_usd": 0.0771,
+  "rows": [
+    {
+      "id": "E01",
+      "gold": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P3",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P2",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": false,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F12"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nThanks for reaching out. The Roosterly mobile app requires iOS 16 or later. Since your iPhone 8 is running iOS 15, the app will not work correctly and may crash. Please update the device to iOS 16 (or later) or use a device with a supported iOS version.\n\nIf you continue to experience issues after updating, let us know and we’ll investigate further.\n\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly addresses the issue using only information from the help centre."
+        }
+      },
+      "reply_en": "Hi,\n\nThanks for reaching out. The Roosterly mobile app requires iOS 16 or later. Since your iPhone 8 is running iOS 15, the app will not work correctly and may crash. Please update the device to iOS 16 (or later) or use a device with a supported iOS version.\n\nIf you continue to experience issues after updating, let us know and we’ll investigate further.\n\nTeam Roosterly",
+      "gold_reason": "English ticket. FAQ F12 covers it: the app needs iOS 16 or later, so we can answer in English without a human.",
+      "agent_reason": "The issue is a bug (app crash) affecting a single user, requiring a fix by updating iOS. It's covered by FAQ F12, so we can reply with steps. Priority P2 as one customer is blocked."
+    },
+    {
+      "id": "E02",
+      "gold": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P2",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": false,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F06"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nYou can adjust the new VAT number for future invoices via Settings → Company details. There you can update the VAT number and the change will be applied from the next invoice.\n\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly follows the help centre and addresses the customer's request."
+        }
+      },
+      "reply_en": "Hi,\n\nYou can adjust the new VAT number for future invoices via Settings → Company details. There you can update the VAT number and the change will be applied from the next invoice.\n\nTeam Roosterly",
+      "gold_reason": "How to change invoice details is in FAQ F06. Reply in Dutch.",
+      "agent_reason": "The request is about updating billing details (VAT number) which is covered by FAQ F06, so a reply with the steps is sufficient. Category is billing, priority P2 as it affects future invoices."
+    },
+    {
+      "id": "E03",
+      "gold": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "Refund request ('terugkrijgen' = get back). Client rule: refunds always go to a human.",
+      "agent_reason": "The request is a refund claim, which triggers the hard rule for refunds. It is a billing issue, requires human handling, and involves money, so priority is P2."
+    },
+    {
+      "id": "E04",
+      "gold": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F03"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nYou can swap a shift via the app. Open the shift and tap \"Offer swap\". Colleagues with the same role can accept the swap. As a manager you then need to approve the swap under Rota → Requests. Manager approval is on by default; you can turn it off via Settings → Rota.\n\nRegards,\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly follows the help centre and addresses the customer's question."
+        }
+      },
+      "reply_en": "Hi,\n\nYou can swap a shift via the app. Open the shift and tap \"Offer swap\". Colleagues with the same role can accept the swap. As a manager you then need to approve the swap under Rota → Requests. Manager approval is on by default; you can turn it off via Settings → Rota.\n\nRegards,\nTeam Roosterly",
+      "gold_reason": "Dutch how-to question about swapping shifts, answered by FAQ F03. Reply in Dutch.",
+      "agent_reason": "The ticket is a simple how‑to question about swapping shifts, covered by FAQ F03. It is a question category, low urgency, so we can reply directly."
+    },
+    {
+      "id": "E05",
+      "gold": {
+        "language": "nl",
+        "category": "feature_request",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "feature_request",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F10"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nThanks for your suggestion! You can submit your idea for a Google Calendar integration on our public roadmap: https://roadmap.roosterly.nl. There you can also vote on other ideas.\n\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly follows the help centre and client rules."
+        }
+      },
+      "reply_en": "Hi,\n\nThanks for your suggestion! You can submit your idea for a Google Calendar integration on our public roadmap: https://roadmap.roosterly.nl. There you can also vote on other ideas.\n\nTeam Roosterly",
+      "gold_reason": "Feature request (Google Calendar sync). Acknowledge in Dutch and point to the roadmap (F10).",
+      "agent_reason": "The ticket is a feature request (Google Calendar integration) covered by FAQ F10, so we can reply with a thank you and the roadmap link. No hard rules trigger, thus reply is appropriate."
+    },
+    {
+      "id": "E06",
+      "gold": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "pred": {
+        "language": "en",
+        "category": "bug",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "One customer blocked from publishing: P2, needs an engineer.",
+      "agent_reason": "The ticket describes a functional error (bug) that is not covered by the help centre. No hard rules apply, so it must be handed off to a human for investigation. Priority is set to P2 as it blocks the customer's ability to publish a rota."
+    },
+    {
+      "id": "E07",
+      "gold": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "billing",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F05"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nThe Plus price is €6 per active employee per month (excluding VAT). For 25 employees that costs €150 per month. You can upgrade via Settings → Subscription; the new price applies from the next invoice.\n\nRegards,\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly answers the pricing question using only help centre information."
+        }
+      },
+      "reply_en": "Hi,\n\nThe Plus price is €6 per active employee per month (excluding VAT). For 25 employees that costs €150 per month. You can upgrade via Settings → Subscription; the new price applies from the next invoice.\n\nRegards,\nTeam Roosterly",
+      "gold_reason": "Price question answered by F05 (25 x €6 = €150 excl. VAT). Reply in Dutch.",
+      "agent_reason": "The ticket is a straightforward pricing question (billing) answered fully by FAQ F05, so we can reply with the calculated cost and upgrade steps."
+    },
+    {
+      "id": "E08",
+      "gold": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P4",
+        "action": "close"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P4",
+        "action": "close"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "close",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "Spam (crypto offer): close it.",
+      "agent_reason": "The ticket is clearly spam advertising unrelated services, which falls under 'other' and should be closed."
+    },
+    {
+      "id": "E09",
+      "gold": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "other",
+        "priority": "P2",
+        "action": "handoff"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "handoff",
+        "faq_ids": [],
+        "deterministic_check": null,
+        "judge": null
+      },
+      "reply_en": null,
+      "gold_reason": "GDPR access request ('inzageverzoek', AVG = Dutch GDPR): always a human.",
+      "agent_reason": "The ticket is a request for personal data under GDPR, which triggers the personal_data_request hard rule. According to policy, such requests must be handed off to a human. Category set to other and priority P2 as it involves personal data but not an immediate security risk."
+    },
+    {
+      "id": "E10",
+      "gold": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "pred": {
+        "language": "nl",
+        "category": "question",
+        "priority": "P4",
+        "action": "reply"
+      },
+      "correct": {
+        "language": true,
+        "category": true,
+        "priority": true,
+        "action": true
+      },
+      "unsafe_reply": false,
+      "over_escalation": false,
+      "escalated_because": [],
+      "model_said": {
+        "action": "reply",
+        "faq_ids": [
+          "F11"
+        ],
+        "deterministic_check": [],
+        "judge": {
+          "verdict": "pass",
+          "back_translation": "Hi,\n\nFor planned maintenance work you can view the status page: status.roosterly.nl. There you will find current information about any maintenance plans.\n\nKind regards,\nTeam Roosterly",
+          "unsupported_claims": [],
+          "rule_violations": [],
+          "notes": "The reply correctly points to the status page and follows all rules."
+        }
+      },
+      "reply_en": "Hi,\n\nFor planned maintenance work you can view the status page: status.roosterly.nl. There you will find current information about any maintenance plans.\n\nKind regards,\nTeam Roosterly",
+      "gold_reason": "Asks about planned maintenance tonight. Point to the status page (F11), in Dutch.",
+      "agent_reason": "The ticket is a simple question about maintenance schedule, covered by FAQ F11. It is a question category, low urgency, so reply with the status page link."
+    }
+  ]
+}
