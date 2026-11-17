@@ -1,0 +1,20 @@
+{
+  "run": "20261117T193631",
+  "tickets": 30,
+  "counts": {
+    "stopped_model_unavailable": 30
+  },
+  "still_open": 30,
+  "helpdesk_calls": {
+    "calls": 8
+  },
+  "llm": {
+    "by_model": {},
+    "cost_usd": 0.0,
+    "price_per_1m_tokens_usd": {
+      "input": 0.15,
+      "output": 0.6
+    }
+  },
+  "log": "D:\\Sandoz\\nardavo\\roosterly-agent\\logs\\run-20261117T193631.jsonl"
+}
