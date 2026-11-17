@@ -1,0 +1,28 @@
+{
+  "run": "20261117T191248",
+  "tickets": 30,
+  "counts": {
+    "reply:dry_run": 10,
+    "handoff:dry_run": 18,
+    "close:dry_run": 2
+  },
+  "still_open": null,
+  "helpdesk_calls": {
+    "calls": 33
+  },
+  "llm": {
+    "by_model": {
+      "openai/gpt-oss-120b": {
+        "calls": 40,
+        "input": 89799,
+        "output": 11062
+      }
+    },
+    "cost_usd": 0.02011,
+    "price_per_1m_tokens_usd": {
+      "input": 0.15,
+      "output": 0.6
+    }
+  },
+  "log": "D:\\Sandoz\\nardavo\\roosterly-agent\\logs\\run-20261117T191248-dry.jsonl"
+}

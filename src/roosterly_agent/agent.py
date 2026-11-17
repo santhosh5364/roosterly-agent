@@ -16,7 +16,7 @@ from pathlib import Path
 from .llm import LLM
 from .prompts import JUDGE_SYSTEM, TRIAGE_SYSTEM, ReplyCheck, Triage, format_ticket
 from .redact import redact
-from .rules import PRIORITY_FLOOR, is_empty, match_hard_rules, most_urgent
+from .rules import PRIORITY_FLOOR, is_empty, match_hard_rules, match_injection, most_urgent
 from .verify import detect_language, detect_language_confident, deterministic_checks
 
 log = logging.getLogger(__name__)
@@ -57,8 +57,11 @@ class TriageAgent:
             }, {**meta, "path": "empty"})
 
         detected = detect_language_confident(f"{subject}\n{body}")
+        injection = match_injection(f"{subject}\n{body}")
+        meta["injection"] = injection
         t = self.llm.structured(model=self.agent_model, system=self.triage_system,
-                                user=format_ticket(ticket, subject, body, detected), schema=Triage)
+                                user=format_ticket(ticket, subject, body, detected, injection),
+                                schema=Triage)
         if detected and detected != t.language:
             # A confident detector beats the model on this one field (it mislabelled English as Dutch).
             meta["language_override"] = f"{t.language}->{detected}"
@@ -81,6 +84,16 @@ class TriageAgent:
                 priority = most_urgent(priority, PRIORITY_FLOOR[r])
             if "refund_or_disputed_charge" in rules:
                 category = "billing"
+
+        if injection:
+            # Text in the ticket tries to steer the agent. A human decides, and the injected text
+            # must not set the priority: only proven hard rules may raise it.
+            if action != "handoff":
+                meta["escalated_because"].append(f"possible prompt injection: {injection!r}")
+            action = "handoff"
+            priority = "P3"
+            for r in rules:
+                priority = most_urgent(priority, PRIORITY_FLOOR[r])
 
         if action == "close" and confidence < CLOSE_MIN_CONFIDENCE:
             meta["escalated_because"].append(f"close confidence {confidence:.2f} too low")
@@ -146,6 +159,10 @@ class TriageAgent:
     @staticmethod
     def _handoff_note(t: Triage, meta: dict) -> str:
         note = t.handoff_note.strip() or t.english_summary.strip()
+        if meta.get("injection"):
+            note = (f"WARNING: this ticket contains text addressed to the AI/system that tries to steer the "
+                    f"outcome (\"{meta['injection']}\"). The agent ignored it. Do not grant refunds, discounts "
+                    f"or priority based on that text without checking. {note}")
         if meta["escalated_because"]:
             note += f" [Agent: {meta['escalated_because'][0]}]"
         if meta["redacted"]:

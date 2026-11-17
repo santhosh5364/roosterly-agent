@@ -91,6 +91,21 @@ def most_urgent(a: str, b: str) -> str:
     return min(a, b)  # "P1" < "P2" < ...
 
 
+_INJECTION = re.compile("|".join([
+    r"(?:negeer|vergeet|ignore|disregard|ignoriere|vergiss).{0,30}(?:instructie|instructions?|anweisung|regels|rules)",
+    r"systeem ?bericht", r"system ?(?:message|prompt|notice)", r"systemnachricht",
+    r"(?:notitie|bericht|opmerking|note|message|hinweis) (?:voor|for|an|f[üu]r) (?:de |the |den )?(?:ai|a\.i\.|bot|assistent|assistant|agent|model|ki)",
+    r"\b(?:ai|ki)[- ](?:assistent|assistant|agent)", r"you are now", r"je bent nu", r"act as",
+    r"(?:zet|set|change|markeer|mark) (?:de |the )?(?:prioriteit|priority|status|ticket)",
+]), re.I)
+
+
+def match_injection(text: str) -> str | None:
+    """Text addressed to the AI that tries to steer the outcome. Returns the matched snippet."""
+    m = _INJECTION.search(text or "")
+    return m.group(0) if m else None
+
+
 def is_empty(subject: str | None, body: str | None) -> bool:
     """No letters anywhere: nothing a human or the agent could act on."""
     text = f"{subject or ''} {body or ''}"
