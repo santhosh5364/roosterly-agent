@@ -3,6 +3,54 @@
 A **workflow agent with guardrails**: code owns the control flow, the LLM makes judgement calls inside it,
 and deterministic checks can always turn a reply into a handoff (never the other way round).
 
+## 0. Pattern: Hexagonal (Ports & Adapters)
+
+The decision core is pure logic with no I/O. Everything that touches the outside world is an adapter
+behind a small interface, so it can be swapped or faked in tests.
+
+```mermaid
+flowchart LR
+    subgraph Adapters_in["Driving adapters"]
+        CLI["cli.py<br/>terminal"]
+        EV["evaluate.py<br/>eval harness"]
+    end
+
+    subgraph Core["Core: pure decision logic (no network, no files)"]
+        AG["agent.py<br/>pipeline"]
+        RU["rules.py<br/>hard rules"]
+        RD["redact.py<br/>payment data"]
+        VE["verify.py<br/>reply checks"]
+        PR["prompts.py<br/>prompts + schemas"]
+    end
+
+    subgraph Adapters_out["Driven adapters"]
+        HD["helpdesk.py<br/>HelpdeskClient"]
+        LL["llm.py<br/>LLM (OpenAI-compatible)"]
+        FS["runner.py<br/>logs + ledger"]
+    end
+
+    CLI --> FS
+    CLI --> EV
+    FS --> AG
+    EV --> AG
+    AG --> RU
+    AG --> RD
+    AG --> VE
+    AG --> PR
+    AG -- "port: structured(schema)" --> LL
+    FS -- "port: list / get / post_decision" --> HD
+    LL --> P[["Groq / OpenAI / Ollama"]]
+    HD --> API[["Roosterly helpdesk"]]
+```
+
+| Port | Production adapter | Test adapter |
+|---|---|---|
+| Helpdesk (`list`, `get`, `post_decision`, `reset`) | `HelpdeskClient` over httpx | `httpx.MockTransport` with random 503/429/409 (`tests/test_flow.py`) |
+| Model (`structured(schema)`) | `LLM` over any OpenAI-compatible API | `FakeLLMClient` with scripted answers, crashes and outages |
+
+Why this shape: the eval and the live run share one code path (`agent.decide`), the core is covered by
+offline tests, and changing provider or helpdesk touches one file.
+
 ## 1. Components
 
 ```mermaid
@@ -214,3 +262,29 @@ flowchart LR
 | Menu/link check against `faq.md` | Only the LLM judge | Catches invented menus cheaply and deterministically (caught one in eval) |
 | Helpdesk is the source of truth | Local database of handled tickets | A reset or a manual change on the server can never desync; re-running is always safe |
 | OpenAI-compatible client | One vendor SDK | Same code runs on Groq, OpenAI, Gemini or a local Ollama model |
+
+## 7. How this scales to production (not built, on purpose)
+
+The take-home handles 30 tickets in one batch. For the client's real ~200 tickets a week I would change
+the edges, not the core:
+
+```mermaid
+flowchart LR
+    HDK[["Helpdesk"]] -- "webhook: new ticket" --> Q[(Queue)]
+    Q --> W["Worker<br/>agent.decide (unchanged)"]
+    W -- "confidence high,<br/>all checks pass" --> SEND["Send reply"]
+    W -- "reply, but borderline" --> REV["Human approves draft<br/>(one click)"]
+    W -- "handoff" --> TEAM["Support team inbox"]
+    W --> MET[("Metrics:<br/>reply rate, escalation rate,<br/>reopen rate, cost")]
+    REV -- "edits become<br/>new labelled examples" --> EVALSET[("Eval set")]
+```
+
+| Today | Production | Why |
+|---|---|---|
+| Batch run over open tickets | Webhook per new ticket into a queue | Answer in seconds; retries per message |
+| Reply or handoff | Add "draft for approval" between them | Grow automation safely while trust is built |
+| 10 labelled examples | Team edits and labels feed a growing eval set | Real measurement, held-out test split |
+| Log files | Metrics dashboard and alerts | Spot drift: rising escalations or reopened tickets |
+| One model | Same `.env` switch, or local Ollama | Data residency if the client requires it |
+
+The core (`agent.py`, `rules.py`, `verify.py`, `redact.py`) stays the same; only adapters change.
