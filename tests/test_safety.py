@@ -60,3 +60,10 @@ def test_verifier_rejects_wrong_language():
     reply = ("Hi Anouk, go to Team → Medewerker toevoegen (Add employee), enter the name, email address "
              "and contract hours and click Uitnodigen (Invite). Kind regards, Team Roosterly")
     assert not deterministic_checks(reply, "nl", FAQ).ok
+
+
+def test_language_detector_only_when_confident():
+    from roosterly_agent.verify import detect_language_confident
+    assert detect_language_confident("The app crashes immediately on my iPhone 8 (iOS 15). Other staff are fine.") == "en"
+    assert detect_language_confident("Ons btw-nummer is veranderd. Kunnen jullie het nieuwe op onze facturen zetten?") == "nl"
+    assert detect_language_confident("Hallo?") is None

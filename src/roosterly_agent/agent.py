@@ -17,7 +17,7 @@ from .llm import LLM
 from .prompts import JUDGE_SYSTEM, TRIAGE_SYSTEM, ReplyCheck, Triage, format_ticket
 from .redact import redact
 from .rules import PRIORITY_FLOOR, is_empty, match_hard_rules, most_urgent
-from .verify import detect_language, deterministic_checks
+from .verify import detect_language, detect_language_confident, deterministic_checks
 
 log = logging.getLogger(__name__)
 
@@ -56,8 +56,13 @@ class TriageAgent:
                 "confidence": 0.99,
             }, {**meta, "path": "empty"})
 
+        detected = detect_language_confident(f"{subject}\n{body}")
         t = self.llm.structured(model=self.agent_model, system=self.triage_system,
-                                user=format_ticket(ticket, subject, body), schema=Triage)
+                                user=format_ticket(ticket, subject, body, detected), schema=Triage)
+        if detected and detected != t.language:
+            # A confident detector beats the model on this one field (it mislabelled English as Dutch).
+            meta["language_override"] = f"{t.language}->{detected}"
+            t.language = detected
         meta.update({"model_action": t.action, "model_hard_rules": list(t.hard_rules),
                      "faq_ids": t.faq_ids, "english_summary": t.english_summary})
 

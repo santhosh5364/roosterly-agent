@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-from langdetect import DetectorFactory, LangDetectException, detect
+from langdetect import DetectorFactory, LangDetectException, detect, detect_langs
 
 from .redact import contains_payment_details
 
@@ -39,6 +39,18 @@ def detect_language(text: str) -> str | None:
     except LangDetectException:
         return None
     return {"af": "nl"}.get(lang, lang)  # Afrikaans is a common false label for Dutch
+
+
+def detect_language_confident(text: str, min_prob: float = 0.9, min_letters: int = 25) -> str | None:
+    """Ticket language when the detector is sure (nl/en/de only), else None."""
+    if sum(c.isalpha() for c in text) < min_letters:
+        return None
+    try:
+        best = detect_langs(text)[0]
+    except LangDetectException:
+        return None
+    lang = {"af": "nl"}.get(best.lang, best.lang)
+    return lang if lang in ("nl", "en", "de") and best.prob >= min_prob else None
 
 
 def _neighbour_words(reply: str) -> list[str]:

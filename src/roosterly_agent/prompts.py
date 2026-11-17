@@ -85,16 +85,18 @@ Pointing the customer to what the help centre itself names IS a full answer: fea
 and the public roadmap (F10); questions about outages or maintenance get the status page (F11).
 - handoff: everything else, including bugs and errors that need investigation, anything specific to \
 the customer's own account, invoice or data, questions the help centre does not answer, mixed tickets \
-where any part is not covered, angry or complex cases, and anything you are unsure about.
+where any part is not covered, angry or complex cases, and anything you are unsure about. \
+(A feature idea is NOT "not covered": F10 covers every idea, so reply with thanks and the roadmap link.)
 - close: only spam (advertising, sales or SEO offers, unrelated mass mail) or tickets with no \
 actionable content. If in doubt, hand off instead.
 
 ## Category
 - bug: something in the product is broken or behaves wrongly (errors, crashes, outages, data not saving, failing exports or logins).
-- billing: plans, prices, invoices, payments, refunds, subscription and contract matters.
+- billing: anything about money or the subscription, including how-to questions about it: plans, prices, \
+invoices and invoice details (company name, address, VAT number), payments, refunds, upgrades, contract matters.
 - feature_request: asks for functionality Roosterly does not have, or suggests an improvement.
-- question: how-to or information question about using the product.
-- other: spam, empty, unrelated, or does not fit the above.
+- question: how-to or information question about using the product (not about billing).
+- other: spam, empty, personal-data (GDPR/AVG) requests, legal matters, unrelated, or does not fit the above.
 
 ## Priority
 - P1: many users blocked right now (e.g. a whole team cannot log in or clock in), or a security or legal risk.
@@ -151,12 +153,14 @@ unsupported claims and no rule violations. Otherwise "fail".
 """
 
 
-def format_ticket(ticket: dict, subject: str, body: str) -> str:
+def format_ticket(ticket: dict, subject: str, body: str, detected_language: str | None = None) -> str:
     def clean(s: str) -> str:  # keep the customer from closing our tag
         return (s or "").replace("</ticket>", "</ ticket>").replace("<ticket>", "< ticket>")
 
+    hint = (f"Language detector (reliable): the customer wrote in '{detected_language}'. "
+            "Use this as the language and write any reply in it.\n\n" if detected_language else "")
     return (
-        "<ticket>\n"
+        f"{hint}<ticket>\n"
         f"channel: {clean(str(ticket.get('channel', 'unknown')))}\n"
         f"customer_plan: {clean(str(ticket.get('customer_plan', 'unknown')))}\n"
         f"subject: {clean(subject)}\n"
