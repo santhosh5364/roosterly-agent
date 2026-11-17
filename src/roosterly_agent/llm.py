@@ -9,9 +9,11 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from collections import defaultdict
 from typing import TypeVar
 
+import openai
 from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
@@ -26,7 +28,8 @@ class LLMError(Exception):
 class LLM:
     def __init__(self, base_url: str | None, api_key: str, *, json_mode: str = "schema",
                  price_in: float = 0.0, price_out: float = 0.0, reasoning_effort: str | None = None,
-                 client: OpenAI | None = None):
+                 max_rate_limit_wait: float = 600.0, client: OpenAI | None = None,
+                 sleep=time.sleep):
         # max_retries: the SDK backs off on 429/5xx itself.
         self.client = client or OpenAI(base_url=base_url or None, api_key=api_key or "none",
                                        max_retries=6, timeout=120.0)
@@ -36,6 +39,34 @@ class LLM:
         self.extra = {"reasoning_effort": reasoning_effort} if reasoning_effort else {}
         self.usage: dict[str, dict[str, int]] = defaultdict(
             lambda: {"calls": 0, "input": 0, "output": 0})
+        self.max_rate_limit_wait = max_rate_limit_wait
+        self.sleep = sleep
+
+    def _create(self, **kwargs):
+        """chat.completions.create, patient with per-minute rate limits.
+
+        Free tiers refill their token bucket every minute, longer than the SDK's own short
+        retries. Wait as long as the provider asks, up to max_rate_limit_wait in total.
+        A daily quota cannot be waited out in a run, so that error is raised at once.
+        """
+        waited = 0.0
+        while True:
+            try:
+                return self.client.chat.completions.create(**kwargs)
+            except openai.RateLimitError as exc:
+                text = str(exc).lower()
+                if "per day" in text or "tpd" in text or "rpd" in text:
+                    raise
+                try:
+                    wait = float(exc.response.headers.get("retry-after", "20"))
+                except (AttributeError, TypeError, ValueError):
+                    wait = 20.0
+                wait = min(max(wait, 2.0), 60.0)
+                if waited + wait > self.max_rate_limit_wait:
+                    raise
+                log.info("model rate limited; waiting %.0fs", wait)
+                self.sleep(wait)
+                waited += wait
 
     def structured(self, *, model: str, system: str, user: str, schema: type[T],
                    max_tokens: int = 3000) -> T:
@@ -52,7 +83,7 @@ class LLM:
         messages = [{"role": "system", "content": sys_prompt}, {"role": "user", "content": user}]
         last_error: Exception | None = None
         for attempt in range(2):  # one repair attempt if the JSON does not validate
-            resp = self.client.chat.completions.create(
+            resp = self._create(
                 model=model, messages=messages, response_format=response_format,
                 max_tokens=max_tokens, temperature=0, **self.extra)
             self._track(model, resp.usage)

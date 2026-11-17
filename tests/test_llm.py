@@ -39,3 +39,42 @@ def test_gives_up_after_two_invalid():
     fake = FakeClient(["nope", "still nope"])
     with pytest.raises(LLMError):
         LLM(None, "k", client=fake).structured(model="m", system="s", user="u", schema=ReplyCheck)
+
+
+def _rate_limit(msg="Rate limit reached ... tokens per minute (TPM)"):
+    import httpx
+    import openai
+    resp = httpx.Response(429, headers={"retry-after": "7"},
+                          request=httpx.Request("POST", "https://llm.test"))
+    return openai.RateLimitError(msg, response=resp, body=None)
+
+
+def test_waits_out_per_minute_rate_limit():
+    fake = FakeClient([GOOD])
+    calls = {"n": 0}
+    real = fake.chat.completions.create
+
+    def flaky(**kw):
+        calls["n"] += 1
+        if calls["n"] <= 2:
+            raise _rate_limit()
+        return real(**kw)
+
+    fake.chat.completions.create = flaky
+    slept = []
+    out = LLM(None, "k", client=fake, sleep=slept.append).structured(
+        model="m", system="s", user="u", schema=ReplyCheck)
+    assert out.verdict == "pass" and slept == [7.0, 7.0]
+
+
+def test_daily_quota_is_not_waited_out():
+    import openai
+    fake = FakeClient([GOOD])
+
+    def daily(**kw):
+        raise _rate_limit("Rate limit reached ... tokens per day (TPD)")
+
+    fake.chat.completions.create = daily
+    with pytest.raises(openai.RateLimitError):
+        LLM(None, "k", client=fake, sleep=lambda s: None).structured(
+            model="m", system="s", user="u", schema=ReplyCheck)
